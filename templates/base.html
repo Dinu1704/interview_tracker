@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Interview Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Theme Switch -->
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider">
+                <span class="icon sun-icon"><i class="bi bi-sun-fill"></i></span>
+                <span class="icon moon-icon"><i class="bi bi-moon-fill"></i></span>
+            </div>
+        </label>
+    </div>
+    
+    <div class="container py-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <header class="mb-4">
+            <div class="card mb-4">
+                <div class="card-body text-white text-center py-5" style="background: var(--header-gradient);">
+                    <h1 class="display-4 fw-bold mb-0"><i class="bi bi-briefcase me-2"></i>HR Interview Tracker</h1>
+                    <p class="lead mt-3">Keep track of your job applications and interviews</p>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <a href="{{ url_for('add_application') }}" class="btn btn-success btn-lg shadow-sm">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Application
+                </a>
+                <div class="btn-group flex-wrap">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary shadow-sm">All</a>
+                    {% for status in ['Waiting for HR', 'L1 Cleared', 'L2 Cleared', 'Final Round', 'Offer Released', 'Rejected'] %}
+                        <a href="{{ url_for('index', status=status) }}" 
+                           class="btn btn-outline-{{ 'success' if status == 'Offer Released' else 'danger' if status == 'Rejected' else 'warning' if status == 'Waiting for HR' else 'info' }} shadow-sm">
+                            {% if status == 'Waiting for HR' %}
+                                <i class="bi bi-hourglass me-1"></i>
+                            {% elif status == 'L1 Cleared' or status == 'L2 Cleared' %}
+                                <i class="bi bi-check-circle me-1"></i>
+                            {% elif status == 'Final Round' %}
+                                <i class="bi bi-trophy me-1"></i>
+                            {% elif status == 'Offer Released' %}
+                                <i class="bi bi-envelope-check me-1"></i>
+                            {% elif status == 'Rejected' %}
+                                <i class="bi bi-x-circle me-1"></i>
+                            {% endif %}
+                            {{ status }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Theme switcher functionality
+        const toggleSwitch = document.querySelector('#checkbox');
+        const html = document.querySelector('html');
+        
+        // Function to set theme
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            toggleSwitch.checked = (theme === 'dark');
+        }
+        
+        // Check for saved theme preference or use default
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        setTheme(currentTheme);
+        
+        // Switch theme when toggle is clicked
+        toggleSwitch.addEventListener('change', function() {
+            if(this.checked) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        });
+    </script>
+<!-- Loading Spinner -->
+<div class="spinner-overlay" id="loadingSpinner">
+    <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<script>
+    // Loading spinner functions
+    function showLoading() {
+        document.getElementById('loadingSpinner').classList.add('show');
+    }
+    
+    function hideLoading() {
+        document.getElementById('loadingSpinner').classList.remove('show');
+    }
+    
+    // Add loading spinner to all form submissions
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function() {
+                showLoading();
+            });
+        });
+    });
+</script>
+</body>
+</html>

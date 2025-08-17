@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title">Edit Application</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="company_name" class="form-label">Company Name*</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name" value="{{ application.company_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role*</label>
+                    <input type="text" class="form-control" id="role" name="role" value="{{ application.role }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="hr_name" class="form-label">HR Name</label>
+                    <input type="text" class="form-control" id="hr_name" name="hr_name" value="{{ application.hr_name or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="hr_contact" class="form-label">HR Contact</label>
+                    <input type="text" class="form-control" id="hr_contact" name="hr_contact" value="{{ application.hr_contact or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="recruiter_name" class="form-label">Work Mode</label>
+                    <select class="form-select" id="recruiter_name" name="recruiter_name">
+                        <option value="Work from Home" {% if application.recruiter_name == 'Work from Home' %}selected{% endif %}>Work from Home</option>
+                        <option value="Work from Office" {% if application.recruiter_name == 'Work from Office' %}selected{% endif %}>Work from Office</option>
+                        <option value="Hybrid" {% if application.recruiter_name == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                    </select>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="l1_date" class="form-label">L1 Date</label>
+                        <input type="date" class="form-control" id="l1_date" name="l1_date" value="{{ l1_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="l2_date" class="form-label">L2 Date</label>
+                        <input type="date" class="form-control" id="l2_date" name="l2_date" value="{{ l2_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="final_round_date" class="form-label">Final Round Date</label>
+                        <input type="date" class="form-control" id="final_round_date" name="final_round_date" value="{{ final_round_date }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="offer_status" class="form-label">Status</label>
+                    <select class="form-select" id="offer_status" name="offer_status">
+                        <option value="Waiting for HR" {% if application.offer_status == 'Waiting for HR' %}selected{% endif %}>Waiting for HR</option>
+                        <option value="L1 Cleared" {% if application.offer_status == 'L1 Cleared' %}selected{% endif %}>L1 Cleared</option>
+                        <option value="L2 Cleared" {% if application.offer_status == 'L2 Cleared' %}selected{% endif %}>L2 Cleared</option>
+                        <option value="Final Round" {% if application.offer_status == 'Final Round' %}selected{% endif %}>Final Round</option>
+                        <option value="Offer Released" {% if application.offer_status == 'Offer Released' %}selected{% endif %}>Offer Released</option>
+                        <option value="Rejected" {% if application.offer_status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="follow_up_date" class="form-label">Follow-up Date</label>
+                    <input type="date" class="form-control" id="follow_up_date" name="follow_up_date" value="{{ follow_up_date }}">
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3">{{ application.notes or '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

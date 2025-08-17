@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="input-group mb-2">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search for company, role, recruiter..." autofocus>
+            <button type="button" id="clearSearch" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div id="searchResults" class="small text-muted" style="display: none;">
+            Showing <span id="resultCount">0</span> of <span id="totalCount">0</span> applications
+        </div>
+        <div class="d-flex justify-content-end mt-3 gap-2">
+            <button type="button" class="btn btn-sm btn-outline-success" id="exportCSVBtn">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="printTableBtn">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="toggleColumnsBtn">
+                <i class="bi bi-layout-three-columns me-1"></i> Toggle Columns
+            </button>
+        </div>
+        <div class="collapse mt-3" id="columnToggleCollapse">
+            <div class="card card-body bg-light">
+                <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-2">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleCompany" data-column="0" checked>
+                            <label class="form-check-label" for="toggleCompany">Company</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleRole" data-column="1" checked>
+                            <label class="form-check-label" for="toggleRole">Role</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleHRName" data-column="2" checked>
+                            <label class="form-check-label" for="toggleHRName">HR Name</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleHRContact" data-column="3" checked>
+                            <label class="form-check-label" for="toggleHRContact">HR Contact</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleWorkMode" data-column="4" checked>
+                            <label class="form-check-label" for="toggleWorkMode">Work Mode</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleL1Date" data-column="5" checked>
+                            <label class="form-check-label" for="toggleL1Date">L1 Date</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleL2Date" data-column="6" checked>
+                            <label class="form-check-label" for="toggleL2Date">L2 Date</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleFinalRound" data-column="7" checked>
+                            <label class="form-check-label" for="toggleFinalRound">Final Round</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleStatus" data-column="8" checked>
+                            <label class="form-check-label" for="toggleStatus">Status</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleFollowUp" data-column="9" checked>
+                            <label class="form-check-label" for="toggleFollowUp">Follow-up</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead style="background: var(--header-gradient); color: white;">
+            <tr>
+                <th><i class="bi bi-building me-2"></i>Company</th>
+                <th><i class="bi bi-briefcase me-2"></i>Role</th>
+                <th><i class="bi bi-person-badge me-2"></i>HR Name</th>
+                <th><i class="bi bi-envelope me-2"></i>HR Contact</th>
+                <th><i class="bi bi-building-gear me-2"></i>Work Mode</th>
+                <th><i class="bi bi-calendar-event me-2"></i>L1 Date</th>
+                <th><i class="bi bi-calendar2-event me-2"></i>L2 Date</th>
+                <th><i class="bi bi-calendar-check me-2"></i>Final Round</th>
+                <th><i class="bi bi-flag me-2"></i>Status</th>
+                <th><i class="bi bi-bell me-2"></i>Follow-up</th>
+                <th><i class="bi bi-gear me-2"></i>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.company_name }}</td>
+                <td>{{ app.role }}</td>
+                <td>
+                    {% if app.hr_name %}
+                        {{ app.hr_name }}<br>
+                        <small class="text-muted">{{ app.hr_contact if app.hr_contact else '' }}</small>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge" style="background-color: {{ '#28a745' if app.recruiter_name == 'Work from Home' else '#0d6efd' if app.recruiter_name == 'Work from Office' else '#6610f2' if app.recruiter_name == 'Hybrid' else '#6c757d' }}; color: white; padding: 6px 10px; border-radius: 16px;">
+                        {% if app.recruiter_name == 'Work from Home' %}
+                            <i class="bi bi-house me-1"></i>
+                        {% elif app.recruiter_name == 'Work from Office' %}
+                            <i class="bi bi-building me-1"></i>
+                        {% elif app.recruiter_name == 'Hybrid' %}
+                            <i class="bi bi-arrows-move me-1"></i>
+                        {% endif %}
+                        {{ app.recruiter_name or 'Not Specified' }}
+                    </span>
+                </td>
+                <td>{{ app.l1_date.strftime('%d-%b') if app.l1_date else '-' }}</td>
+                <td>{{ app.l2_date.strftime('%d-%b') if app.l2_date else '-' }}</td>
+                <td>{{ app.final_round_date.strftime('%d-%b') if app.final_round_date else '-' }}</td>
+                <td>
+                    <span class="badge status-badge" style="background: {{ '#28a745' if app.offer_status == 'Offer Released' else '#dc3545' if app.offer_status == 'Rejected' else '#ffc107' if app.offer_status == 'Waiting for HR' else '#0dcaf0' if app.offer_status == 'L1 Cleared' else '#6610f2' if app.offer_status == 'L2 Cleared' else '#6f42c1' }}; color: {{ '#fff' if app.offer_status != 'Waiting for HR' else '#212529' }}; padding: 8px 12px; border-radius: 20px; font-weight: 500;">
+                        {% if app.offer_status == 'Waiting for HR' %}
+                            <i class="bi bi-hourglass me-1"></i>
+                        {% elif app.offer_status == 'L1 Cleared' or app.offer_status == 'L2 Cleared' %}
+                            <i class="bi bi-check-circle me-1"></i>
+                        {% elif app.offer_status == 'Final Round' %}
+                            <i class="bi bi-trophy me-1"></i>
+                        {% elif app.offer_status == 'Offer Released' %}
+                            <i class="bi bi-envelope-check me-1"></i>
+                        {% elif app.offer_status == 'Rejected' %}
+                            <i class="bi bi-x-circle me-1"></i>
+                        {% endif %}
+                        {{ app.offer_status }}
+                    </span>
+                </td>
+                <td class="{{ 'fw-bold text-danger' if app.follow_up_date and app.follow_up_date <= datetime.utcnow().date() else 'fw-bold text-success' if app.follow_up_date and app.follow_up_date > datetime.utcnow().date() }}">
+                    {{ app.follow_up_date.strftime('%d-%b') if app.follow_up_date else '-' }}
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('edit_application', id=app.id) }}" class="btn btn-sm btn-outline-primary rounded-start" title="Edit Application"><i class="bi bi-pencil-square"></i> Edit</a>
+                        <button type="submit" form="delete-form-{{ app.id }}" class="btn btn-sm btn-outline-danger rounded-end" title="Delete Application"><i class="bi bi-trash"></i> Delete</button>
+                        <form id="delete-form-{{ app.id }}" action="{{ url_for('delete_application', id=app.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application?')"></form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const clearButton = document.getElementById('clearSearch');
+    const tableRows = document.querySelectorAll('tbody tr');
+    const tableBody = document.querySelector('tbody');
+    
+    // Create no results message row
+    const noResultsRow = document.createElement('tr');
+    noResultsRow.id = 'noResultsRow';
+    noResultsRow.innerHTML = `<td colspan="10" class="text-center py-4">
+        <div class="d-flex flex-column align-items-center">
+            <i class="bi bi-search text-muted" style="font-size: 2rem;"></i>
+            <p class="mt-3 mb-0">No matching applications found</p>
+        </div>
+    </td>`;
+    noResultsRow.style.display = 'none';
+    tableBody.appendChild(noResultsRow);
+    
+    const searchResults = document.getElementById('searchResults');
+    const resultCount = document.getElementById('resultCount');
+    const totalCount = document.getElementById('totalCount');
+    
+    // Set total count
+    const totalApplications = tableRows.length;
+    totalCount.textContent = totalApplications;
+    
+    // Function to highlight text
+    function highlightText(element, searchTerm) {
+        if (!searchTerm) return;
+        
+        const cells = element.querySelectorAll('td');
+        cells.forEach(cell => {
+            // Skip cells with buttons/complex content
+            if (cell.querySelector('button, a')) return;
+            
+            const originalText = cell.textContent;
+            const lowerText = originalText.toLowerCase();
+            const index = lowerText.indexOf(searchTerm);
+            
+            if (index >= 0) {
+                const before = originalText.substring(0, index);
+                const match = originalText.substring(index, index + searchTerm.length);
+                const after = originalText.substring(index + searchTerm.length);
+                
+                cell.innerHTML = before + 
+                    `<span class="bg-warning bg-opacity-50 rounded px-1">${match}</span>` + 
+                    after;
+            }
+        });
+    }
+    
+    // Function to reset highlights
+    function resetHighlights() {
+        tableRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                // Skip cells with buttons/complex content
+                if (cell.querySelector('button, a')) return;
+                
+                // Store original text content if not already stored
+                if (!cell.hasAttribute('data-original')) {
+                    cell.setAttribute('data-original', cell.textContent);
+                }
+                
+                // Reset to original content
+                const originalText = cell.getAttribute('data-original');
+                if (originalText && cell.innerHTML !== originalText) {
+                    cell.textContent = originalText;
+                }
+            });
+        });
+    }
+    
+    // Function to filter table rows based on search input
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+        
+        // Reset highlights first
+        resetHighlights();
+        
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+                
+                // Highlight matching text if search term exists
+                if (searchTerm) {
+                    highlightText(row, searchTerm);
+                }
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update result count
+        resultCount.textContent = visibleCount;
+        
+        // Show/hide elements based on search input
+        if (searchTerm.length > 0) {
+            clearButton.style.display = '';
+            searchResults.style.display = '';
+            
+            // Show no results message if no matches found
+            if (visibleCount === 0) {
+                noResultsRow.style.display = 'table-row';
+            } else {
+                noResultsRow.style.display = 'none';
+            }
+        } else {
+            clearButton.style.display = 'none';
+            searchResults.style.display = 'none';
+            noResultsRow.style.display = 'none';
+        }
+    }
+    
+    // Initial state
+    clearButton.style.display = 'none';
+    
+    // Event listeners
+    searchInput.addEventListener('input', filterTable);
+    
+    clearButton.addEventListener('click', function() {
+        searchInput.value = '';
+        filterTable();
+        searchInput.focus();
+    });
+    
+    // Add keyboard shortcut (Ctrl+F or Cmd+F) to focus search
+    document.addEventListener('keydown', function(e) {
+        // Check if Ctrl+F or Cmd+F is pressed
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            // Prevent the browser's default search
+            e.preventDefault();
+            // Focus the search input
+            searchInput.focus();
+        }
+    });
+    
+    // Column toggle functionality
+    const toggleColumnsBtn = document.getElementById('toggleColumnsBtn');
+    toggleColumnsBtn.addEventListener('click', function() {
+        const collapse = document.getElementById('columnToggleCollapse');
+        if (collapse.classList.contains('show')) {
+            collapse.classList.remove('show');
+        } else {
+            collapse.classList.add('show');
+        }
+    });
+    
+    // Initialize column toggle checkboxes
+    const columnToggles = document.querySelectorAll('.column-toggle');
+    columnToggles.forEach(toggle => {
+        toggle.addEventListener('change', toggleColumn);
+    });
+    
+    // Function to toggle column visibility
+    function toggleColumn(e) {
+        const columnIndex = parseInt(e.target.dataset.column);
+        const isChecked = e.target.checked;
+        const table = document.querySelector('table');
+        
+        // Toggle header
+        const headers = table.querySelectorAll('thead th');
+        if (headers[columnIndex]) {
+            headers[columnIndex].style.display = isChecked ? '' : 'none';
+        }
+        
+        // Toggle cells in each row
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells[columnIndex]) {
+                cells[columnIndex].style.display = isChecked ? '' : 'none';
+            }
+        });
+        
+        // Save column preferences to localStorage
+        saveColumnPreferences();
+    }
+    
+    // Function to save column preferences
+    function saveColumnPreferences() {
+        const preferences = {};
+        document.querySelectorAll('.column-toggle').forEach(toggle => {
+            preferences[toggle.id] = toggle.checked;
+        });
+        localStorage.setItem('columnPreferences', JSON.stringify(preferences));
+    }
+    
+    // Function to load column preferences
+    function loadColumnPreferences() {
+        const savedPreferences = localStorage.getItem('columnPreferences');
+        if (savedPreferences) {
+            const preferences = JSON.parse(savedPreferences);
+            document.querySelectorAll('.column-toggle').forEach(toggle => {
+                if (preferences[toggle.id] !== undefined) {
+                    toggle.checked = preferences[toggle.id];
+                    // Trigger the change event to apply the saved preference
+                    toggle.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    }
+    
+    // Load saved column preferences
+    loadColumnPreferences();
+    
+    // Export to CSV functionality
+    document.getElementById('exportCSVBtn').addEventListener('click', function() {
+        showLoading();
+        setTimeout(function() {
+            exportTableToCSV();
+            hideLoading();
+        }, 500); // Small delay to ensure spinner shows
+    });
+    
+    // Print table functionality
+    document.getElementById('printTableBtn').addEventListener('click', function() {
+        showLoading();
+        setTimeout(function() {
+            printTable();
+            hideLoading();
+        }, 500); // Small delay to ensure spinner shows
+    });
+    
+    function exportTableToCSV() {
+        const table = document.querySelector('table');
+        const rows = table.querySelectorAll('tr');
+        let csv = [];
+        
+        // Get visible columns
+        const visibleColumns = [];
+        document.querySelectorAll('.column-toggle').forEach(toggle => {
+            if (toggle.checked) {
+                visibleColumns.push(parseInt(toggle.dataset.column));
+            }
+        });
+        
+        // Process each row
+        rows.forEach(row => {
+            // Skip hidden rows (filtered out by search)
+            if (row.style.display === 'none') return;
+            
+            const rowData = [];
+            const cols = row.querySelectorAll('td, th');
+            
+            // Only include visible columns
+            cols.forEach((col, index) => {
+                // Skip action column (last column)
+                if (index === cols.length - 1 && row.parentNode.tagName === 'TBODY') return;
+                
+                // Only include visible columns
+                if (row.parentNode.tagName === 'THEAD' || visibleColumns.includes(index)) {
+                    // Clean the text: remove extra spaces, newlines and quotes
+                    let text = col.textContent.trim().replace(/\s+/g, ' ');
+                    // Escape quotes
+                    text = text.replace(/"/g, '""');
+                    // Add quotes around the field
+                    rowData.push('"' + text + '"');
+                }
+            });
+            
+            csv.push(rowData.join(','));
+        });
+        
+        // Create and download the CSV file
+        const csvContent = csv.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        const timestamp = new Date().toISOString().replace(/[\-\:]/g, '').split('.')[0];
+        link.setAttribute('href', url);
+        link.setAttribute('download', `interview_tracker_${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+        alertDiv.innerHTML = `
+            <i class="bi bi-check-circle me-2"></i>
+            CSV file exported successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        const cardBody = document.querySelector('.card-body');
+        cardBody.appendChild(alertDiv);
+        
+        // Auto dismiss after 3 seconds
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alertDiv);
+            bsAlert.close();
+        }, 3000);
+    }
+    
+    function printTable() {
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank');
+        
+        // Get only visible rows and columns
+        const table = document.querySelector('table');
+        const visibleColumns = [];
+        document.querySelectorAll('.column-toggle').forEach(toggle => {
+            if (toggle.checked) {
+                visibleColumns.push(parseInt(toggle.dataset.column));
+            }
+        });
+        
+        // Create a new table with only visible content
+        let printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Interview Tracker - Print</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                th { background-color: #f2f2f2; font-weight: bold; }
+                .status-badge {
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-weight: 500;
+                    display: inline-block;
+                }
+                .waiting { background-color: #ffc107; color: #212529; }
+                .l1-cleared { background-color: #17a2b8; color: white; }
+                .final-round { background-color: #6f42c1; color: white; }
+                .offer-released { background-color: #28a745; color: white; }
+                .rejected { background-color: #dc3545; color: white; }
+                .print-header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .print-date {
+                    text-align: right;
+                    margin-bottom: 20px;
+                    font-size: 0.8em;
+                    color: #666;
+                }
+                @media print {
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-header">
+                <h1>Interview Tracker</h1>
+                <p>Application Status Report</p>
+            </div>
+            <div class="print-date">
+                Printed on: ${new Date().toLocaleString()}
+            </div>
+        `;
+        
+        // Start table
+        printContent += '<table>';
+        
+        // Add header
+        const headerRow = table.querySelector('thead tr');
+        const headers = headerRow.querySelectorAll('th');
+        
+        printContent += '<thead><tr>';
+        headers.forEach((header, index) => {
+            // Skip action column (last column)
+            if (index === headers.length - 1) return;
+            
+            // Only include visible columns
+            if (visibleColumns.includes(index)) {
+                // Remove icons from header text
+                const headerText = header.textContent.trim();
+                printContent += `<th>${headerText}</th>`;
+            }
+        });
+        printContent += '</tr></thead>';
+        
+        // Add body
+        printContent += '<tbody>';
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            // Skip hidden rows (filtered out by search)
+            if (row.style.display === 'none') return;
+            
+            printContent += '<tr>';
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                // Skip action column (last column)
+                if (index === cells.length - 1) return;
+                
+                // Only include visible columns
+                if (visibleColumns.includes(index)) {
+                    // Special handling for status column
+                    if (cell.querySelector('.status-badge')) {
+                        const status = cell.textContent.trim();
+                        let statusClass = '';
+                        
+                        if (status.includes('Waiting for HR')) statusClass = 'waiting';
+                        else if (status.includes('L1 Cleared')) statusClass = 'l1-cleared';
+                        else if (status.includes('Final Round')) statusClass = 'final-round';
+                        else if (status.includes('Offer Released')) statusClass = 'offer-released';
+                        else if (status.includes('Rejected')) statusClass = 'rejected';
+                        
+                        printContent += `<td><span class="status-badge ${statusClass}">${status}</span></td>`;
+                    } else {
+                        printContent += `<td>${cell.textContent.trim()}</td>`;
+                    }
+                }
+            });
+            printContent += '</tr>';
+        });
+        printContent += '</tbody>';
+        
+        // End table
+        printContent += `
+            </table>
+            <div class="no-print">
+                <button onclick="window.print();" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Print Now
+                </button>
+                <button onclick="window.close();" style="padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                    Close
+                </button>
+            </div>
+        </body>
+        </html>
+        `;
+        
+        // Write to the new window and print
+        printWindow.document.open();
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+    }
+});
+</script>
+{% endblock %}
