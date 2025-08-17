@@ -16,6 +16,7 @@ class Application(db.Model):
     hr_name = db.Column(db.String(100))
     hr_contact = db.Column(db.String(20))
     recruiter_name = db.Column(db.String(100))
+    work_mode = db.Column(db.String(50))
     l1_date = db.Column(db.Date)
     l2_date = db.Column(db.Date)
     final_round_date = db.Column(db.Date)
@@ -53,6 +54,7 @@ def add_application():
                 hr_name=request.form['hr_name'],
                 hr_contact=request.form['hr_contact'],
                 recruiter_name=request.form['recruiter_name'],
+                work_mode=request.form['work_mode'],
                 l1_date=parse_date(request.form['l1_date']),
                 l2_date=parse_date(request.form['l2_date']),
                 final_round_date=parse_date(request.form['final_round_date']),
@@ -86,6 +88,7 @@ def edit_application(id):
             application.hr_name = request.form['hr_name']
             application.hr_contact = request.form['hr_contact']
             application.recruiter_name = request.form['recruiter_name']
+            application.work_mode = request.form['work_mode']
             application.l1_date = parse_date(request.form['l1_date'])
             application.l2_date = parse_date(request.form['l2_date'])
             application.final_round_date = parse_date(request.form['final_round_date'])

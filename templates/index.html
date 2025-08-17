@@ -39,14 +39,14 @@
                     </div>
                     <div class="col">
                         <div class="form-check">
-                            <input class="form-check-input column-toggle" type="checkbox" id="toggleHRName" data-column="2" checked>
-                            <label class="form-check-label" for="toggleHRName">HR Name</label>
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleHRDetails" data-column="2" checked>
+                            <label class="form-check-label" for="toggleHRDetails">HR Details</label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-check">
-                            <input class="form-check-input column-toggle" type="checkbox" id="toggleHRContact" data-column="3" checked>
-                            <label class="form-check-label" for="toggleHRContact">HR Contact</label>
+                            <input class="form-check-input column-toggle" type="checkbox" id="toggleRecruiterName" data-column="3" checked>
+                            <label class="form-check-label" for="toggleRecruiterName">Recruiter Name</label>
                         </div>
                     </div>
                     <div class="col">
@@ -97,8 +97,8 @@
             <tr>
                 <th><i class="bi bi-building me-2"></i>Company</th>
                 <th><i class="bi bi-briefcase me-2"></i>Role</th>
-                <th><i class="bi bi-person-badge me-2"></i>HR Name</th>
-                <th><i class="bi bi-envelope me-2"></i>HR Contact</th>
+                <th><i class="bi bi-person-badge me-2"></i>HR Details</th>
+                <th><i class="bi bi-person-check me-2"></i>Recruiter Name</th>
                 <th><i class="bi bi-building-gear me-2"></i>Work Mode</th>
                 <th><i class="bi bi-calendar-event me-2"></i>L1 Date</th>
                 <th><i class="bi bi-calendar2-event me-2"></i>L2 Date</th>
@@ -121,16 +121,17 @@
                         -
                     {% endif %}
                 </td>
+                <td>{{ app.recruiter_name or '-' }}</td>
                 <td>
-                    <span class="badge" style="background-color: {{ '#28a745' if app.recruiter_name == 'Work from Home' else '#0d6efd' if app.recruiter_name == 'Work from Office' else '#6610f2' if app.recruiter_name == 'Hybrid' else '#6c757d' }}; color: white; padding: 6px 10px; border-radius: 16px;">
-                        {% if app.recruiter_name == 'Work from Home' %}
+                    <span class="badge" style="background-color: {{ '#28a745' if app.work_mode == 'Work from Home' else '#0d6efd' if app.work_mode == 'Work from Office' else '#6610f2' if app.work_mode == 'Hybrid' else '#6c757d' }}; color: white; padding: 6px 10px; border-radius: 16px;">
+                        {% if app.work_mode == 'Work from Home' %}
                             <i class="bi bi-house me-1"></i>
-                        {% elif app.recruiter_name == 'Work from Office' %}
+                        {% elif app.work_mode == 'Work from Office' %}
                             <i class="bi bi-building me-1"></i>
-                        {% elif app.recruiter_name == 'Hybrid' %}
+                        {% elif app.work_mode == 'Hybrid' %}
                             <i class="bi bi-arrows-move me-1"></i>
                         {% endif %}
-                        {{ app.recruiter_name or 'Not Specified' }}
+                        {{ app.work_mode or 'Not Specified' }}
                     </span>
                 </td>
                 <td>{{ app.l1_date.strftime('%d-%b') if app.l1_date else '-' }}</td>

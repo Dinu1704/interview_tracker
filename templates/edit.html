@@ -24,11 +24,15 @@
                     <input type="text" class="form-control" id="hr_contact" name="hr_contact" value="{{ application.hr_contact or '' }}">
                 </div>
                 <div class="mb-3">
-                    <label for="recruiter_name" class="form-label">Work Mode</label>
-                    <select class="form-select" id="recruiter_name" name="recruiter_name">
-                        <option value="Work from Home" {% if application.recruiter_name == 'Work from Home' %}selected{% endif %}>Work from Home</option>
-                        <option value="Work from Office" {% if application.recruiter_name == 'Work from Office' %}selected{% endif %}>Work from Office</option>
-                        <option value="Hybrid" {% if application.recruiter_name == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                    <label for="recruiter_name" class="form-label">Recruiter Name</label>
+                    <input type="text" class="form-control" id="recruiter_name" name="recruiter_name" value="{{ application.recruiter_name or '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="work_mode" class="form-label">Work Mode</label>
+                    <select class="form-select" id="work_mode" name="work_mode">
+                        <option value="Work from Home" {% if application.work_mode == 'Work from Home' %}selected{% endif %}>Work from Home</option>
+                        <option value="Work from Office" {% if application.work_mode == 'Work from Office' %}selected{% endif %}>Work from Office</option>
+                        <option value="Hybrid" {% if application.work_mode == 'Hybrid' %}selected{% endif %}>Hybrid</option>
                     </select>
                 </div>
                 <div class="row mb-3">
