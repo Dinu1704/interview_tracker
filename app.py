@@ -38,7 +38,7 @@ def index():
         query = query.filter_by(offer_status=status_filter)
     
     applications = query.order_by(Application.follow_up_date.asc()).all()
-    return render_template('index.html', applications=applications)
+    return render_template('index.html', applications=applications, datetime=datetime)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_application():

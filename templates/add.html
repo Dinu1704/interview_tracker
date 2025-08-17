@@ -6,71 +6,94 @@
         <h2 class="card-title mb-0">Add New Application</h2>
     </div>
     <div class="card-body">
-        <form method="POST">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="company_name" class="form-label">Company Name*</label>
-                    <input type="text" class="form-control" id="company_name" name="company_name" required>
+        <form method="POST" novalidate>
+            <fieldset class="mb-4">
+                <legend class="h5 mb-3">Application Details</legend>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="company_name" class="form-label">Company Name*</label>
+                        <input type="text" class="form-control" id="company_name" name="company_name" required>
+                        <div class="invalid-feedback">Company name is required.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="role" class="form-label">Role*</label>
+                        <input type="text" class="form-control" id="role" name="role" required>
+                        <div class="invalid-feedback">Role is required.</div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="role" class="form-label">Role*</label>
-                    <input type="text" class="form-control" id="role" name="role" required>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h5 mb-3">Contact Information</legend>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="hr_name" class="form-label">HR Name</label>
+                        <input type="text" class="form-control" id="hr_name" name="hr_name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="hr_contact" class="form-label">HR Contact</label>
+                        <input type="tel" class="form-control" id="hr_contact" name="hr_contact" pattern="[0-9]{10}">
+                        <div class="invalid-feedback">Please enter a valid 10-digit contact number.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="recruiter_name" class="form-label">Recruiter Name</label>
+                        <input type="text" class="form-control" id="recruiter_name" name="recruiter_name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="work_mode" class="form-label">Work Mode</label>
+                        <select class="form-select" id="work_mode" name="work_mode">
+                            <option value="Work from Home">Work from Home</option>
+                            <option value="Work from Office">Work from Office</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="hr_name" class="form-label">HR Name</label>
-                    <input type="text" class="form-control" id="hr_name" name="hr_name">
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h5 mb-3">Interview & Status</legend>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="l1_date" class="form-label">L1 Date</label>
+                        <input type="date" class="form-control" id="l1_date" name="l1_date">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="l2_date" class="form-label">L2 Date</label>
+                        <input type="date" class="form-control" id="l2_date" name="l2_date">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="final_round_date" class="form-label">Final Round Date</label>
+                        <input type="date" class="form-control" id="final_round_date" name="final_round_date">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="offer_status" class="form-label">Status</label>
+                        <select class="form-select" id="offer_status" name="offer_status">
+                            <option value="Waiting for HR" selected>Waiting for HR</option>
+                            <option value="L1 Cleared">L1 Cleared</option>
+                            <option value="L2 Cleared">L2 Cleared</option>
+                            <option value="Final Round">Final Round</option>
+                            <option value="Offer Released">Offer Released</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="follow_up_date" class="form-label">Follow-up Date</label>
+                        <input type="date" class="form-control" id="follow_up_date" name="follow_up_date">
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="hr_contact" class="form-label">HR Contact</label>
-                    <input type="tel" class="form-control" id="hr_contact" name="hr_contact" pattern="[0-9]{10}">
-                </div>
-                <div class="col-md-6">
-                    <label for="recruiter_name" class="form-label">Recruiter Name</label>
-                    <input type="text" class="form-control" id="recruiter_name" name="recruiter_name">
-                </div>
-                <div class="col-md-6">
-                    <label for="work_mode" class="form-label">Work Mode</label>
-                    <select class="form-select" id="work_mode" name="work_mode">
-                        <option value="Work from Home">Work from Home</option>
-                        <option value="Work from Office">Work from Office</option>
-                        <option value="Hybrid">Hybrid</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="l1_date" class="form-label">L1 Date</label>
-                    <input type="date" class="form-control" id="l1_date" name="l1_date">
-                </div>
-                <div class="col-md-4">
-                    <label for="l2_date" class="form-label">L2 Date</label>
-                    <input type="date" class="form-control" id="l2_date" name="l2_date">
-                </div>
-                <div class="col-md-4">
-                    <label for="final_round_date" class="form-label">Final Round Date</label>
-                    <input type="date" class="form-control" id="final_round_date" name="final_round_date">
-                </div>
-                <div class="col-md-6">
-                    <label for="offer_status" class="form-label">Status</label>
-                    <select class="form-select" id="offer_status" name="offer_status">
-                        <option value="Waiting for HR" selected>Waiting for HR</option>
-                        <option value="L1 Cleared">L1 Cleared</option>
-                        <option value="L2 Cleared">L2 Cleared</option>
-                        <option value="Final Round">Final Round</option>
-                        <option value="Offer Released">Offer Released</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="follow_up_date" class="form-label">Follow-up Date</label>
-                    <input type="date" class="form-control" id="follow_up_date" name="follow_up_date">
-                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="h5 mb-3">Notes</legend>
                 <div class="col-12">
-                    <label for="notes" class="form-label">Notes</label>
-                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    <label for="notes" class="form-label visually-hidden">Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Add any relevant notes here..."></textarea>
                 </div>
-            </div>
-            <div class="mt-4">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            </fieldset>
+
+            <div class="mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary btn-lg">Save Application</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg">Cancel</a>
             </div>
         </form>
     </div>
